@@ -13,6 +13,7 @@ class DataSearch extends SearchDelegate<String> {
     "Bogotá",
     "Medellin",
   ];
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -21,28 +22,36 @@ class DataSearch extends SearchDelegate<String> {
         onPressed: () {
           query = "";
         },
-      )
+      ),
     ];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        onPressed: () {},
-        icon: AnimatedIcon(
-          icon: AnimatedIcons.menu_arrow,
-          progress: transitionAnimation,
-        ));
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, query);
+      },
+    );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    return Card(
+    return Center(
+        child: Container(
+      height: 100.0,
+      width: 100.0,
+      child: Card(
         color: Colors.red,
-        shape: StadiumBorder(),
         child: Center(
           child: Text(query),
-        ));
+        ),
+      ),
+    ));
   }
 
   @override
@@ -55,6 +64,7 @@ class DataSearch extends SearchDelegate<String> {
       itemBuilder: (context, index) => ListTile(
         onTap: () {
           showResults(context);
+          query = suggestionList[index];
         },
         leading: Icon(Icons.location_city),
         title: RichText(
