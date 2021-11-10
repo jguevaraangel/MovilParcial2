@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:movil_parcial2/data_search.dart';
 import 'package:movil_parcial2/ui/header_drawer.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 

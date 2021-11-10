@@ -5,8 +5,8 @@ import 'package:movil_parcial2/data/model/weatherfavorite_model.dart';
 import 'package:movil_parcial2/data/model/weatherfavoritedb_model.dart';
 
 class WeatherRepositoryLocal {
-  addWeatherInfo(int cityId, WeatherInfoDB info) {
-    Hive.box('weatherinfo').put(
+  addWeatherInfo(int cityId, WeatherInfoModel info) async {
+    await Hive.box('weatherinfo').put(
         cityId,
         WeatherInfoDB(
           description: info.description,
@@ -22,8 +22,8 @@ class WeatherRepositoryLocal {
         ));
   }
 
-  WeatherInfoModel getWeatherInfo(int cityId) {
-    WeatherInfoDB info = Hive.box("weatherinfo").get(cityId);
+  Future<WeatherInfoModel> getWeatherInfo(int cityId) async {
+    WeatherInfoDB info = await Hive.box("weatherinfo").get(cityId);
     return WeatherInfoModel(
       description: info.description,
       icon: info.icon,
@@ -38,27 +38,40 @@ class WeatherRepositoryLocal {
     );
   }
 
-  addFavoriteCity(int cityId) {
-    Hive.box('favorites').add(WeatherFavoriteDB(
+  addFavoriteCity(int cityId) async {
+    WeatherInfoModel x = await getWeatherInfo(cityId);
+    await Hive.box('favorites').add(WeatherFavoriteDB(
       cityId: cityId,
-      city: getWeatherInfo(cityId).city,
+      city: x.city,
     ));
   }
 
-  List<WeatherFavoriteModel> getAllUsers() {
-    return Hive.box('users').values.map<WeatherFavoriteModel>((e) {
+  Future<List<WeatherFavoriteModel>> getFavorites() async {
+    return Hive.box('favorites').values.map<WeatherFavoriteModel>((e) {
       return WeatherFavoriteModel(
         id: e.key,
-        city: e.country,
-        cityId: e.gender,
+        city: e.city,
+        cityId: e.cityId,
       );
     }).toList();
   }
 
-  addFavoriteCity(int cityId) {
-    Hive.box('favorites').add(WeatherFavoriteDB(
-      cityId: cityId,
-      city: getWeatherInfo(cityId).city,
-    ));
+  deleteFavoriteCity(int cityId) async {
+    Hive.box('favorites').deleteAt(cityId);
   }
+
+  Future<int> getCityKey(int geoID) async {
+    var box = Hive.box("geo2city");
+    if (!box.containsKey(geoID)) {
+      return -1;
+    } else {
+      return box.get(geoID);
+    }
+  }
+
+  addCityKey(int geoID, int cityID) async {
+    await Hive.box("geo2city").put(geoID, cityID);
+  }
+
+  // TODOCODE READ FROM txt
 }

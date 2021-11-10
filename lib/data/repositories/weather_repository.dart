@@ -1,4 +1,8 @@
 import 'package:loggy/loggy.dart';
+import 'package:movil_parcial2/data/local/weather_local_datasource.dart';
+import 'package:movil_parcial2/data/model/weather_model.dart';
+import 'package:movil_parcial2/data/model/weatherfavorite_model.dart';
+import 'package:movil_parcial2/data/remote/weather_repository_remote.dart';
 
 class WeatherRepository {
   late WeatherRepositoryRemote remoteDataSource;
@@ -10,18 +14,16 @@ class WeatherRepository {
     localDataSource = WeatherRepositoryLocal();
   }
 
-  // Future<bool> getUser() async {
-  //   UserModel user = await remoteDataSource.getUser();
-  //   await localDataSource.addUser(user);
-  //   return Future.value(true);
-  // }
+  Future<WeatherInfoModel> getWeatherInfo(int cityId) async {
+    return getWeatherInfo(cityId); // wrap check for exists do everytrhing xd
+  }
 
-  // Future<List<UserModel>> getAllUsers() async =>
-  //     await localDataSource.getAllUsers();
+  Future<List<WeatherFavoriteModel>> getFavorites() async =>
+      await localDataSource.getFavorites();
 
-  // Future<void> deleteUser(id) async => await localDataSource.deleteUser(id);
+  Future<void> addFavoriteCity(int cityId) async =>
+      await localDataSource.addFavoriteCity(cityId);
 
-  // Future<void> deleteAll() async => await localDataSource.deleteAll();
-
-  // Future<void> updateUser(user) async => await localDataSource.updateUser(user);
+  Future<void> deleteFavoriteCity(int cityId) async =>
+      await localDataSource.deleteFavoriteCity(cityId);
 }
