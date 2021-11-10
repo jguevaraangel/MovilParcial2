@@ -13,6 +13,7 @@ class WeatherInfoModel {
   late int cityId;
   late String city;
 
+  late int unixTimestamp;
   WeatherInfoModel({
     required this.description,
     required this.icon,
@@ -24,20 +25,22 @@ class WeatherInfoModel {
     required this.windSpeed,
     required this.cityId,
     required this.city, // Favorite City display, no countries, only basic name
+    required this.unixTimestamp,
   });
 
   WeatherInfoModel.fromJson(Map<String, dynamic> json) {
-    this.mainTitle = json["weather"]["main"];
-    description = json["weather"]["description"];
-    icon = json["weather"]["icon"];
+    this.mainTitle = json["weather"][0]["main"];
+    description = json["weather"][0]["description"];
+    icon = json["weather"][0]["icon"];
 
-    temp = json["main"]["temp"];
-    feelsLike = json["main"]["feels_like"];
-    pressure = json["main"]["pressure"];
-    humidity = json["main"]["humidity"];
+    temp = json["main"]["temp"].toString();
+    feelsLike = json["main"]["feels_like"].toString();
+    pressure = json["main"]["pressure"].toString();
+    humidity = json["main"]["humidity"].toString();
 
-    windSpeed = json["wind"]["speed"];
+    windSpeed = json["wind"]["speed"].toString();
     cityId = json["id"];
     city = json["name"];
+    unixTimestamp = json["dt"];
   }
 }

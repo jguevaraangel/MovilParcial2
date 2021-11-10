@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+part 'weatherdb_model.g.dart';
+
 @HiveType(typeId: 0)
 class WeatherInfoDB extends HiveObject {
   WeatherInfoDB({
@@ -13,6 +15,7 @@ class WeatherInfoDB extends HiveObject {
     required this.windSpeed,
     required this.cityId,
     required this.city,
+    required this.unixTimeStamp,
   });
 
   @HiveField(0)
@@ -39,4 +42,7 @@ class WeatherInfoDB extends HiveObject {
 
   @HiveField(9)
   String city;
+
+  @HiveField(10)
+  int unixTimeStamp;
 }

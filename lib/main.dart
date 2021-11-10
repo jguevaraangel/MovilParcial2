@@ -7,6 +7,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
+import 'package:movil_parcial2/data/model/weatherdb_model.dart';
+import 'package:movil_parcial2/data/model/weatherfavoritedb_model.dart';
 
 // Future<List<Box>> _openBox() async {
 //   List<Box> boxList = [];
@@ -17,6 +19,17 @@ import 'package:loggy/loggy.dart';
 //   boxList.add(user_session);
 //   return boxList;
 // }
+
+Future<void> initHive() async {
+  logInfo("Initializing Hive Adapters!");
+  Hive.registerAdapter(WeatherInfoDBAdapter());
+  Hive.registerAdapter(WeatherFavoriteDBAdapter());
+  logInfo("Opening Hive Boxes!");
+  await Hive.openBox("geo2city");
+  await Hive.openBox("favorites");
+  await Hive.openBox("weatherinfo");
+  logInfo("Boxes Ready!");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,10 +46,14 @@ void main() async {
   WeatherRepository repo = WeatherRepository();
   repo.initializeData();
   Get.put(repo);
-  Get.put(WeatherController());
 
   await Hive.initFlutter();
+  await initHive();
 
+  WeatherController cont = WeatherController();
+  await cont.initializeController();
+  logInfo("Weather Controller Initialized!");
+  Get.put(cont);
   runApp(MyApp());
 }
 
@@ -95,13 +112,29 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Container(
-            child: Column(
+              child: Obx(
+            () => Column(
               children: [
                 HeaderDrawer(),
-                drawerList(),
+                Container(
+                  padding: EdgeInsets.only(
+                    top: 15,
+                  ),
+                  child: Column(
+                    // children: [
+                    //   menuItem("Medellin"),
+                    //   menuItem("Bogotá"),
+                    //   menuItem("Cartagena"),
+                    //   menuItem("Neiva"),
+                    //   menuItem("Barranquilla"),
+                    // ],
+                    children: C.favorites,
+                    // children: Obx(()=> C.favorites);
+                  ),
+                )
               ],
             ),
-          ),
+          )),
         ),
       ),
       body: Center(
@@ -133,22 +166,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Widget drawerList() {
-  return Container(
-    padding: EdgeInsets.only(
-      top: 15,
-    ),
-    child: Column(
-      children: [
-        menuItem("Medellin"),
-        menuItem("Bogotá"),
-        menuItem("Cartagena"),
-        menuItem("Neiva"),
-        menuItem("Barranquilla"),
-      ],
-    ),
-  );
-}
+// Widget generateDrawerList() {
+//   WeatherController C = Get.find();
+
+//   return Container(
+//       padding: EdgeInsets.only(
+//         top: 15,
+//       ),
+//       child: Obx(
+//         () => Column(
+//           // children: [
+//           //   menuItem("Medellin"),
+//           //   menuItem("Bogotá"),
+//           //   menuItem("Cartagena"),
+//           //   menuItem("Neiva"),
+//           //   menuItem("Barranquilla"),
+//           // ],
+//           children:
+//               C.favorite.map((element) => menuItem(element.city)).toList(),
+//         ),
+//       ));
+// }
 
 Widget menuItem(String city) {
   return Material(

@@ -23,6 +23,7 @@ class WeatherRepositoryLocal {
           windSpeed: info.windSpeed,
           cityId: info.cityId,
           city: info.city,
+          unixTimeStamp: info.unixTimestamp,
         ));
   }
 
@@ -39,7 +40,12 @@ class WeatherRepositoryLocal {
       windSpeed: info.windSpeed,
       cityId: info.cityId,
       city: info.city,
+      unixTimestamp: info.unixTimeStamp,
     );
+  }
+
+  Future<bool> checkLocalCityKey(int cityId) async {
+    return Hive.box("weatherinfo").containsKey(cityId);
   }
 
   addFavoriteCity(int cityId) async {
@@ -84,6 +90,7 @@ class WeatherRepositoryLocal {
     3 is Country CODE
     4 is Province/State
     */
+
   Future<List<String>> getCityNames() async {
     String wholeCSV = await rootBundle.loadString("lib/common/cities.csv");
     List<List<dynamic>> rowsAsListOfValues =

@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+part 'weatherfavoritedb_model.g.dart';
+
 @HiveType(typeId: 1)
 class WeatherFavoriteDB extends HiveObject {
   WeatherFavoriteDB({required this.cityId, required this.city});

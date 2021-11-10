@@ -12,19 +12,6 @@ class DataSearch extends SearchDelegate<String> {
     required this.geocodes,
   });
 
-  // final cities = [
-  //   "Bogotá",
-  //   "Medellín",
-  //   "Cartagena",
-  //   "Barranquilla",
-  //   "Neiva",
-  // ];
-
-  // final recentCities = [
-  //   "Bogotá",
-  //   "Medellin",
-  // ];
-
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -73,7 +60,8 @@ class DataSearch extends SearchDelegate<String> {
       itemBuilder: (context, index) => ListTile(
         onTap: () {
           query = suggestionList[index];
-          C.displayWeather(query);
+          int wholeIndex = cities.indexOf(query);
+          C.displayWeather(query, geocodes[wholeIndex]);
           close(context, query);
         },
         leading: Icon(Icons.location_city),
