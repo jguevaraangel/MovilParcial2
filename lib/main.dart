@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
 import 'package:movil_parcial2/data/model/weatherdb_model.dart';
 import 'package:movil_parcial2/data/model/weatherfavoritedb_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Future<List<Box>> _openBox() async {
 //   List<Box> boxList = [];
@@ -139,10 +140,43 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              'Turbaco, Colombia',
+              style: GoogleFonts.merriweather(
+                fontSize: 30.0,
+              ),
+            ),
+            Icon(Icons.beach_access, color: Colors.blue, size: 36.0),
+            Text(
+              'Clear Sky, 30°C',
+              style: GoogleFonts.merriweather(
+                fontSize: 25.0,
+              ),
+            ),
+            Text(
+              'Feels Like Temperature: 33.1°C',
+              style: GoogleFonts.merriweather(
+                fontSize: 20.0,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text(
+                  'Humidity: 60 %',
+                  style: GoogleFonts.merriweather(
+                    fontSize: 15.0,
+                  ),
+                ),
+                Text(
+                  'Wind Speed: 1.5 m/s',
+                  style: GoogleFonts.merriweather(
+                    fontSize: 15.0,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
