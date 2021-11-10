@@ -5,10 +5,12 @@ import 'dart:convert';
 
 class WeatherRepositoryRemote {
   Future<WeatherInfoModel> getWeatherInfo(String cityName) async {
-    var request =
-        Uri.parse("https://randomuser.me/api").resolveUri(Uri(queryParameters: {
-      "format": 'json',
-      "results": "1",
+    var request = Uri.parse("https://api.openweathermap.org/data/2.5/weather")
+        .resolveUri(Uri(queryParameters: {
+      "q": cityName,
+      "appid": API_KEY,
+      "units": "metric",
+      "lang": "es",
     }));
 
     var response = await http.get(request);

@@ -4,6 +4,10 @@ import 'package:hive/hive.dart';
 import 'package:movil_parcial2/data/model/weatherfavorite_model.dart';
 import 'package:movil_parcial2/data/model/weatherfavoritedb_model.dart';
 
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:csv/csv.dart';
+import 'package:movil_parcial2/common/constants.dart';
+
 class WeatherRepositoryLocal {
   addWeatherInfo(int cityId, WeatherInfoModel info) async {
     await Hive.box('weatherinfo').put(
@@ -73,5 +77,30 @@ class WeatherRepositoryLocal {
     await Hive.box("geo2city").put(geoID, cityID);
   }
 
-  // TODOCODE READ FROM txt
+  /*
+    0 is Index
+    1 is GeoID
+    2 is Name
+    3 is Country CODE
+    4 is Province/State
+    */
+  Future<List<String>> getCityNames() async {
+    String wholeCSV = await rootBundle.loadString("lib/common/cities.csv");
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(wholeCSV);
+
+    return rowsAsListOfValues.map((e) {
+      return "${e[2]}, ${countryCodeToName[e[3]]}";
+    }).toList();
+  }
+
+  Future<List<int>> getCityCodes() async {
+    String wholeCSV = await rootBundle.loadString("lib/common/cities.csv");
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(wholeCSV);
+
+    return rowsAsListOfValues.map((e) {
+      return e[1] as int;
+    }).toList();
+  }
 }

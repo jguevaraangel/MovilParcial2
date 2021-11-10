@@ -8,10 +8,18 @@ class WeatherRepository {
   late WeatherRepositoryRemote remoteDataSource;
   late WeatherRepositoryLocal localDataSource;
 
+  late List<String> cityNames;
+  late List<int> cityCodes;
+
   WeatherRepository() {
     logInfo("Starting UserRepository");
     remoteDataSource = WeatherRepositoryRemote();
     localDataSource = WeatherRepositoryLocal();
+  }
+
+  Future<void> initializeData() async {
+    cityNames = await localDataSource.getCityNames();
+    cityCodes = await localDataSource.getCityCodes();
   }
 
   Future<WeatherInfoModel> getWeatherInfo(int cityId) async {
@@ -26,4 +34,8 @@ class WeatherRepository {
 
   Future<void> deleteFavoriteCity(int cityId) async =>
       await localDataSource.deleteFavoriteCity(cityId);
+
+  List<String> getCityNames() => cityNames;
+
+  List<int> getCityCodes() => cityCodes;
 }

@@ -1,17 +1,23 @@
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
+import 'package:movil_parcial2/data/model/weather_model.dart';
+import 'package:movil_parcial2/data/model/weatherfavorite_model.dart';
+import 'package:movil_parcial2/data/repositories/weather_repository.dart';
 
 class WeatherController extends GetxController {
   WeatherRepository repository = Get.find();
 
-  final RxList<int> cityCodes = <int>[].obs; // stored city names.
-  final RxList<int> favCityCodes = <int>[].obs;
+  final RxList<WeatherFavoriteModel> favorite = <WeatherFavoriteModel>[].obs;
 
-  final RxMap<int, String> favoriteCityNames =
-      <int, String>{}.obs; // favorite city names.
+  late Rx<WeatherInfoModel> currWeatherInfo;
 
-  final RxMap<int, WeatherInfo> cityWeatherInfo =
-      <int, WeatherInfo>{}; // Maps city code to info.
+  void displayWeather(String city) {
+    print(city);
+  }
+
+  // Future<List<String>> get cityNames() =>
+  List<String> get cityNames => repository.getCityNames();
+  List<int> get cityCodes => repository.getCityCodes();
 
   // final RxBool _loading = false.obs;
 

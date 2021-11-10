@@ -1,18 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:movil_parcial2/data/repositories/weather_repository.dart';
 import 'package:movil_parcial2/data_search.dart';
+import 'package:movil_parcial2/domain/controller/weather_controller.dart';
 import 'package:movil_parcial2/ui/header_drawer.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:get/get.dart';
+import 'package:loggy/loggy.dart';
+
+// Future<List<Box>> _openBox() async {
+//   List<Box> boxList = [];
+//   var dir = await path_provider.getApplicationDocumentsDirectory();
+//   Hive.init(dir.path);
+//   Hive.registerAdapter(UserDBAdapter());
+//   var user_session = await Hive.openBox("users");
+//   boxList.add(user_session);
+//   return boxList;
+// }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await _openBox();
+  Loggy.initLoggy(
+    logPrinter: const PrettyPrinter(
+      showColors: true,
+    ),
+  );
+
+  // Get.put(Connectivity());
+  // Connectivity c = Get.find();
+  // Get.put(NetworkInfo(connectivity: c));
+  WeatherRepository repo = WeatherRepository();
+  repo.initializeData();
+  Get.put(repo);
+  Get.put(WeatherController());
+
   await Hive.initFlutter();
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: MyHomePage(),
     );
@@ -27,6 +58,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  WeatherController C = Get.find();
+
   bool _isFavorite = false;
   _addFavorite() {
     var newBool = true;
@@ -49,8 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.teal[400],
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              showSearch(context: context, delegate: DataSearch());
+            onPressed: () async {
+              await showSearch(
+                  context: context,
+                  delegate:
+                      DataSearch(cities: C.cityNames, geocodes: C.cityCodes));
             },
             icon: Icon(Icons.search),
           )

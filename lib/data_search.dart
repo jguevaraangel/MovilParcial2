@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:movil_parcial2/domain/controller/weather_controller.dart';
+import 'package:get/get.dart';
 
 class DataSearch extends SearchDelegate<String> {
-  final cities = [
-    "Bogotá",
-    "Medellín",
-    "Cartagena",
-    "Barranquilla",
-    "Neiva",
-  ];
+  WeatherController C = Get.find();
+  final List<String> cities;
+  final List<int> geocodes;
 
-  final recentCities = [
-    "Bogotá",
-    "Medellin",
-  ];
+  DataSearch({
+    required this.cities,
+    required this.geocodes,
+  });
+
+  // final cities = [
+  //   "Bogotá",
+  //   "Medellín",
+  //   "Cartagena",
+  //   "Barranquilla",
+  //   "Neiva",
+  // ];
+
+  // final recentCities = [
+  //   "Bogotá",
+  //   "Medellin",
+  // ];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -40,31 +51,30 @@ class DataSearch extends SearchDelegate<String> {
   }
 
   @override
+  void showResults(BuildContext context) {
+    return;
+  }
+
+  @override
   Widget buildResults(BuildContext context) {
-    return Center(
-        child: Container(
-      height: 100.0,
-      width: 100.0,
-      child: Card(
-        color: Colors.red,
-        child: Center(
-          child: Text(query),
-        ),
-      ),
-    ));
+    return Container();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     final suggestionList = query.isEmpty
-        ? recentCities
-        : cities.where((p) => p.startsWith(query)).toList();
+        // ? recentCities
+        ? []
+        : cities
+            .where((p) => p.toLowerCase().startsWith(query.toLowerCase()))
+            .toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         onTap: () {
-          showResults(context);
           query = suggestionList[index];
+          C.displayWeather(query);
+          close(context, query);
         },
         leading: Icon(Icons.location_city),
         title: RichText(
