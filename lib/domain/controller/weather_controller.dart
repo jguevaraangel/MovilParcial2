@@ -15,6 +15,14 @@ extension CapExtension on String {
 class WeatherController extends GetxController {
   WeatherRepository repository = Get.find();
 
+  Future<void> initializeController() async {
+    int bogotaID = 3688689;
+    WeatherInfoModel weatherInfo =
+        await repository.getWeatherInfoByCityID(bogotaID);
+    currWeatherInfo = weatherInfo.obs;
+    _updateFavoriteCities();
+  }
+
   /* Weather Functionality */
   late Rx<WeatherInfoModel> currWeatherInfo;
 
@@ -35,22 +43,8 @@ class WeatherController extends GetxController {
   String get humidity => 'Humidity: ${currWeatherInfo.value.humidity} %';
   String get windSpeed => 'Wind Speed: ${currWeatherInfo.value.windSpeed} m/s';
 
-  Future<void> initializeController() async {
-    int bogotaID = 3688689;
-    WeatherInfoModel weatherInfo =
-        await repository.getWeatherInfoByCityID(bogotaID);
-    currWeatherInfo = weatherInfo.obs;
-    _updateFavoriteCities();
-  }
-
-  Future<void> _updateFavoriteCities() async {
-    _favorites.value = await repository.getFavorites();
-  }
-
+  // Internal Helper
   void _updateWeatherDisplay(WeatherInfoModel information) async {
-    await addFavoriteCity(information.cityId);
-    await _updateFavoriteCities();
-    logDebug("Added ${information.city} to favorites!");
     currWeatherInfo.value = information;
   }
 
@@ -83,18 +77,31 @@ class WeatherController extends GetxController {
 
   final RxList<WeatherFavoriteModel> _favorites = <WeatherFavoriteModel>[].obs;
 
-  RxBool _favDisplay = false.obs;
-  bool get favdisplay => _favDisplay.value;
+  bool get favDisplay => _checkFavCurrent();
 
   List<Widget> get favorites =>
-      _favorites.map((e) => menuItem(e.city)).toList();
+      _favorites.map((e) => menuItem(e.city, e.cityId)).toList();
   // List<WeatherFavoriteModel> get favorites => _favorites.map((e) => e).toList();
 
-  void toggleDisplayFavorite() {
-    if (_favDisplay.value) {
-      _favDisplay.value = false;
+  Future<void> _updateFavoriteCities() async {
+    _favorites.value = await repository.getFavorites();
+  }
+
+  bool _checkFavCurrent() => _favorites
+      .map((element) => element.cityId)
+      .contains(currWeatherInfo.value.cityId);
+
+  void toggleDisplayFavorite() async {
+    if (_checkFavCurrent()) {
+      // find in favorites
+      int id = _favorites
+          .firstWhere(
+              (element) => element.cityId == currWeatherInfo.value.cityId)
+          .id;
+      await repository.deleteFavoriteCity(id);
     } else {
-      _favDisplay.value = true;
+      await repository.addFavoriteCity(currWeatherInfo.value.cityId);
     }
+    await _updateFavoriteCities();
   }
 }

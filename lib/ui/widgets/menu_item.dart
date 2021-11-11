@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:movil_parcial2/domain/controller/weather_controller.dart';
 
-Widget menuItem(String city) {
+Widget menuItem(String city, int cityID) {
+  WeatherController C = Get.find();
   return Material(
     child: InkWell(
-      onTap: () {},
+      onTap: () {
+        C.displayWeatherByCityID(cityID);
+        Get.back();
+      },
       child: Padding(
         padding: EdgeInsets.all(15.0),
         child: Row(

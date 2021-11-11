@@ -12,9 +12,9 @@ class WeatherRepository {
   late List<String> cityQueryNames;
   late List<int> cityCodes;
 
-  static const int SecondsTillInfoExpiration = 60; // weather expires after a 1m
-  // static const int SecondsTillInfoExpiration =
-  //     60 * 60; // weather expires after 1h
+  // static const int SecondsTillInfoExpiration = 60; // weather expires after a 1m
+  static const int SecondsTillInfoExpiration =
+      60 * 60; // weather expires after 1h
 
   WeatherRepository() {
     logInfo("Creating Weather Repository");

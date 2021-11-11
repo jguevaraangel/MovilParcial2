@@ -100,8 +100,8 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: Obx(() => FloatingActionButton(
             backgroundColor:
-                (C.favdisplay) ? Colors.red[700] : Color(0xff9A9A9A),
-            splashColor: (C.favdisplay) ? Colors.red[700] : Color(0xff9A9A9A),
+                (C.favDisplay) ? Colors.red[700] : Color(0xff9A9A9A),
+            splashColor: (C.favDisplay) ? Colors.red[700] : Color(0xff9A9A9A),
             onPressed: () {
               C.toggleDisplayFavorite();
             },
