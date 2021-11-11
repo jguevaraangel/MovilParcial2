@@ -16,11 +16,17 @@ class WeatherController extends GetxController {
   WeatherRepository repository = Get.find();
 
   Future<void> initializeController() async {
-    int bogotaID = 3688689;
-    WeatherInfoModel weatherInfo =
-        await repository.getWeatherInfoByCityID(bogotaID);
-    currWeatherInfo = weatherInfo.obs;
-    _updateFavoriteCities();
+    await _updateFavoriteCities();
+    if (_favorites.length > 0) {
+      WeatherInfoModel weatherInfo =
+          await repository.getWeatherInfoByCityID(_favorites[0].cityId);
+      currWeatherInfo = weatherInfo.obs;
+    } else {
+      int bogotaID = 3688689;
+      WeatherInfoModel weatherInfo =
+          await repository.getWeatherInfoByCityID(bogotaID);
+      currWeatherInfo = weatherInfo.obs;
+    }
   }
 
   /* Weather Functionality */
