@@ -28,13 +28,14 @@ class WeatherInfoDBAdapter extends TypeAdapter<WeatherInfoDB> {
       cityId: fields[8] as int,
       city: fields[9] as String,
       unixTimeStamp: fields[10] as int,
+      country: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, WeatherInfoDB obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.description)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class WeatherInfoDBAdapter extends TypeAdapter<WeatherInfoDB> {
       ..writeByte(9)
       ..write(obj.city)
       ..writeByte(10)
-      ..write(obj.unixTimeStamp);
+      ..write(obj.unixTimeStamp)
+      ..writeByte(11)
+      ..write(obj.country);
   }
 
   @override

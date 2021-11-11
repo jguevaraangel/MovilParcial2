@@ -5,35 +5,58 @@ import 'package:loggy/loggy.dart';
 import 'package:movil_parcial2/data/model/weather_model.dart';
 import 'package:movil_parcial2/data/model/weatherfavorite_model.dart';
 import 'package:movil_parcial2/data/repositories/weather_repository.dart';
-import 'package:movil_parcial2/main.dart';
+import 'package:movil_parcial2/ui/widgets/menu_item.dart';
+
+extension CapExtension on String {
+  String get capitalizeFirstofEach =>
+      this.split(" ").map((str) => str.capitalize).join(" ");
+}
 
 class WeatherController extends GetxController {
   WeatherRepository repository = Get.find();
 
-  final RxList<WeatherFavoriteModel> _favorites = <WeatherFavoriteModel>[].obs;
-
-  List<Widget> get favorites =>
-      _favorites.map((e) => menuItem(e.city)).toList();
-
+  /* Weather Functionality */
   late Rx<WeatherInfoModel> currWeatherInfo;
 
+  String get weatherTitle =>
+      (currWeatherInfo.value.city + ", " + currWeatherInfo.value.country);
+
+  String get iconpath => currWeatherInfo.value.icon;
+
+  String get weatherMainDisplay =>
+      currWeatherInfo.value.description.capitalizeFirstofEach +
+      ", " +
+      currWeatherInfo.value.temp +
+      "°C";
+
+  String get feelsLike =>
+      "Feels Like Temperature: ${currWeatherInfo.value.feelsLike}°C";
+
+  String get humidity => 'Humidity: ${currWeatherInfo.value.humidity} %';
+  String get windSpeed => 'Wind Speed: ${currWeatherInfo.value.windSpeed} m/s';
+
   Future<void> initializeController() async {
+    int bogotaID = 3688689;
+    WeatherInfoModel weatherInfo =
+        await repository.getWeatherInfoByCityID(bogotaID);
+    currWeatherInfo = weatherInfo.obs;
     _updateFavoriteCities();
   }
 
-  void _updateFavoriteCities() async {
+  Future<void> _updateFavoriteCities() async {
     _favorites.value = await repository.getFavorites();
   }
 
-  void _updateWeatherDisplay(WeatherInfoModel information) {
-    addFavoriteCity(information.cityId);
+  void _updateWeatherDisplay(WeatherInfoModel information) async {
+    await addFavoriteCity(information.cityId);
+    await _updateFavoriteCities();
     logDebug("Added ${information.city} to favorites!");
-    return;
+    currWeatherInfo.value = information;
   }
 
-  void displayWeather(String city, int geoID) async {
+  void displayWeather(String cityNameQuerySearch, int geoID) async {
     repository
-        .getWeatherInfo(city, geoID)
+        .getWeatherInfo(cityNameQuerySearch, geoID)
         .then((info) => _updateWeatherDisplay(info))
         .catchError((error) =>
             {logError("Connection Error! Couldn't Fetch Information: $error")});
@@ -48,34 +71,30 @@ class WeatherController extends GetxController {
   }
 
   List<String> get cityNames => repository.getCityNames();
+  List<String> get queryNames => repository.getCityQueryNames();
   List<int> get cityCodes => repository.getCityCodes();
+
+  /* Favorite Functionality */
 
   Future<void> addFavoriteCity(int cityId) async =>
       await repository.addFavoriteCity(cityId);
   Future<void> deleteFavoriteCity(int cityId) async =>
       await repository.deleteFavoriteCity(cityId);
-  // final RxBool _loading = false.obs;
 
-  // bool get loading => _loading.value;
-  // List<NewsItem> get news => _news;
+  final RxList<WeatherFavoriteModel> _favorites = <WeatherFavoriteModel>[].obs;
 
-  // bool emptyNews() {
-  //   return _news.isEmpty;
-  // }
+  RxBool _favDisplay = false.obs;
+  bool get favdisplay => _favDisplay.value;
 
-  // void getNews(String topic) async {
-  //   _loading.value = true;
-  //   Get.find<News>().getNews(topic).then((value) {
-  //     _news.value = value;
-  //     _loading.value = false; // Done loading
-  //   }).catchError((error) {
-  //     Get.snackbar('Error!', error,
-  //         snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
-  //     _loading.value = false;
-  //   });
-  // }
+  List<Widget> get favorites =>
+      _favorites.map((e) => menuItem(e.city)).toList();
+  // List<WeatherFavoriteModel> get favorites => _favorites.map((e) => e).toList();
 
-  // void reset() {
-  //   _news.value = <NewsItem>[].obs;
-  // }
+  void toggleDisplayFavorite() {
+    if (_favDisplay.value) {
+      _favDisplay.value = false;
+    } else {
+      _favDisplay.value = true;
+    }
+  }
 }

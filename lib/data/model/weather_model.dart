@@ -1,3 +1,5 @@
+import 'package:movil_parcial2/common/constants.dart';
+
 class WeatherInfoModel {
   late String mainTitle;
   late String description;
@@ -13,6 +15,8 @@ class WeatherInfoModel {
   late int cityId;
   late String city;
 
+  late String country;
+
   late int unixTimestamp;
   WeatherInfoModel({
     required this.description,
@@ -26,6 +30,7 @@ class WeatherInfoModel {
     required this.cityId,
     required this.city, // Favorite City display, no countries, only basic name
     required this.unixTimestamp,
+    required this.country,
   });
 
   WeatherInfoModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +46,8 @@ class WeatherInfoModel {
     windSpeed = json["wind"]["speed"].toString();
     cityId = json["id"];
     city = json["name"];
+
+    country = "${countryCodeToName[json["sys"]["country"].toString()]}";
     unixTimestamp = json["dt"];
   }
 }

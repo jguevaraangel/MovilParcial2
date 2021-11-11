@@ -16,6 +16,7 @@ class WeatherInfoDB extends HiveObject {
     required this.cityId,
     required this.city,
     required this.unixTimeStamp,
+    required this.country,
   });
 
   @HiveField(0)
@@ -45,4 +46,7 @@ class WeatherInfoDB extends HiveObject {
 
   @HiveField(10)
   int unixTimeStamp;
+
+  @HiveField(11)
+  String country;
 }

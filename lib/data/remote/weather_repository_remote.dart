@@ -11,7 +11,7 @@ class WeatherRepositoryRemote {
       "q": cityName,
       "appid": API_KEY,
       "units": "metric",
-      "lang": "es",
+      "lang": "en",
     }));
 
     logInfo("Fetching from remote with request: $request");
@@ -35,7 +35,7 @@ class WeatherRepositoryRemote {
       "id": cityID.toString(),
       "appid": API_KEY,
       "units": "metric",
-      "lang": "es",
+      "lang": "en",
     }));
 
     logInfo("Fetching from remote with request: $request");

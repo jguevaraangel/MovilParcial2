@@ -5,11 +5,13 @@ import 'package:get/get.dart';
 class DataSearch extends SearchDelegate<String> {
   WeatherController C = Get.find();
   final List<String> cities;
+  final List<String> queryNames;
   final List<int> geocodes;
 
   DataSearch({
     required this.cities,
     required this.geocodes,
+    required this.queryNames,
   });
 
   @override
@@ -61,7 +63,7 @@ class DataSearch extends SearchDelegate<String> {
         onTap: () {
           query = suggestionList[index];
           int wholeIndex = cities.indexOf(query);
-          C.displayWeather(query, geocodes[wholeIndex]);
+          C.displayWeather(queryNames[wholeIndex], geocodes[wholeIndex]);
           close(context, query);
         },
         leading: Icon(Icons.location_city),

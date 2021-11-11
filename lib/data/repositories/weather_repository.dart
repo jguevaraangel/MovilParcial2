@@ -9,10 +9,12 @@ class WeatherRepository {
   late WeatherRepositoryLocal localDataSource;
 
   late List<String> cityNames;
+  late List<String> cityQueryNames;
   late List<int> cityCodes;
 
   static const int SecondsTillInfoExpiration = 60; // weather expires after a 1m
-  // 60 * 60; // weather expires after 1h
+  // static const int SecondsTillInfoExpiration =
+  //     60 * 60; // weather expires after 1h
 
   WeatherRepository() {
     logInfo("Creating Weather Repository");
@@ -24,12 +26,13 @@ class WeatherRepository {
     logInfo("Initializing Weather Data");
     cityNames = await localDataSource.getCityNames();
     cityCodes = await localDataSource.getCityCodes();
+    cityQueryNames = await localDataSource.getQueryNames();
   }
 
   Future<WeatherInfoModel> _addWeatherInfoCity(
-      String cityname, int geoID) async {
+      String cityNameQuerySearch, int geoID) async {
     WeatherInfoModel ret = await remoteDataSource
-        .getWeatherInfo(cityname)
+        .getWeatherInfo(cityNameQuerySearch)
         .then((WeatherInfoModel newInfo) async {
       // add to Database if fetched Sucessfully.
       await localDataSource.addCityKey(geoID, newInfo.cityId);
@@ -55,15 +58,16 @@ class WeatherRepository {
     return ret;
   }
 
-  Future<WeatherInfoModel> getWeatherInfo(String cityName, int geoID) async {
+  Future<WeatherInfoModel> getWeatherInfo(
+      String cityNameQuerySearch, int geoID) async {
     // IF cityKey is in geoID database, THEN CITY MUST BE IN WHOLE DATABASE.
     // Verify if geoID is in local database.
-    logInfo("Requesting Weather Info: $cityName & geoID = $geoID");
+    logInfo("Requesting Weather Info: $cityNameQuerySearch & geoID = $geoID");
     int cityKey = await localDataSource.getCityKey(geoID);
     if (cityKey == -1) {
       logInfo("geoID: $geoID not found in local! Requesting from Remote");
       // Not in local database, fetch and Add.
-      return await _addWeatherInfoCity(cityName, geoID);
+      return await _addWeatherInfoCity(cityNameQuerySearch, geoID);
     } else {
       // In Local Database, so just get from city, and check if exists.
       logInfo("geoID: $geoID found in local, associated cityID $cityKey");
@@ -98,13 +102,19 @@ class WeatherRepository {
   Future<List<WeatherFavoriteModel>> getFavorites() async =>
       await localDataSource.getFavorites();
 
-  Future<void> addFavoriteCity(int cityId) async =>
+  Future<void> addFavoriteCity(int cityId) async {
+    if (!await localDataSource.checkFavoriteCity(cityId)) {
       await localDataSource.addFavoriteCity(cityId);
+    } else {
+      logWarning("Tried to Favorite An Already favorite City!");
+    }
+  }
 
   Future<void> deleteFavoriteCity(int cityId) async =>
       await localDataSource.deleteFavoriteCity(cityId);
 
   List<String> getCityNames() => cityNames;
+  List<String> getCityQueryNames() => cityQueryNames;
 
   List<int> getCityCodes() => cityCodes;
 }

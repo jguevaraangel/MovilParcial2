@@ -24,6 +24,7 @@ class WeatherRepositoryLocal {
           cityId: info.cityId,
           city: info.city,
           unixTimeStamp: info.unixTimestamp,
+          country: info.country,
         ));
   }
 
@@ -41,6 +42,7 @@ class WeatherRepositoryLocal {
       cityId: info.cityId,
       city: info.city,
       unixTimestamp: info.unixTimeStamp,
+      country: info.country,
     );
   }
 
@@ -54,6 +56,10 @@ class WeatherRepositoryLocal {
       cityId: cityId,
       city: x.city,
     ));
+  }
+
+  Future<bool> checkFavoriteCity(int cityID) async {
+    return Hive.box('favorites').values.map((e) => e.cityId).contains(cityID);
   }
 
   Future<List<WeatherFavoriteModel>> getFavorites() async {
@@ -98,6 +104,16 @@ class WeatherRepositoryLocal {
 
     return rowsAsListOfValues.map((e) {
       return "${e[2]}, ${countryCodeToName[e[3]]}";
+    }).toList();
+  }
+
+  Future<List<String>> getQueryNames() async {
+    String wholeCSV = await rootBundle.loadString("lib/common/cities.csv");
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(wholeCSV);
+
+    return rowsAsListOfValues.map((e) {
+      return "${e[2]},${e[4]},${e[3]}";
     }).toList();
   }
 
