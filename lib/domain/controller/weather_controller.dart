@@ -69,12 +69,6 @@ class WeatherController extends GetxController {
   List<int> get cityCodes => repository.getCityCodes();
 
   /* Favorite Functionality */
-
-  Future<void> addFavoriteCity(int cityId) async =>
-      await repository.addFavoriteCity(cityId);
-  Future<void> deleteFavoriteCity(int cityId) async =>
-      await repository.deleteFavoriteCity(cityId);
-
   final RxList<WeatherFavoriteModel> _favorites = <WeatherFavoriteModel>[].obs;
 
   bool get favDisplay => _checkFavCurrent();
@@ -93,12 +87,7 @@ class WeatherController extends GetxController {
 
   void toggleDisplayFavorite() async {
     if (_checkFavCurrent()) {
-      // find in favorites
-      int id = _favorites
-          .firstWhere(
-              (element) => element.cityId == currWeatherInfo.value.cityId)
-          .id;
-      await repository.deleteFavoriteCity(id);
+      await repository.deleteFavoriteCity(currWeatherInfo.value.cityId);
     } else {
       await repository.addFavoriteCity(currWeatherInfo.value.cityId);
     }

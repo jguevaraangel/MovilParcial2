@@ -1,3 +1,4 @@
+import 'package:loggy/loggy.dart';
 import 'package:movil_parcial2/data/model/weather_model.dart';
 import 'package:movil_parcial2/data/model/weatherdb_model.dart';
 import 'package:hive/hive.dart';
@@ -73,7 +74,16 @@ class WeatherRepositoryLocal {
   }
 
   deleteFavoriteCity(int cityId) async {
-    Hive.box('favorites').deleteAt(cityId);
+    Box favbox = Hive.box("favorites");
+    List<WeatherFavoriteDB> x =
+        favbox.values.map((e) => e as WeatherFavoriteDB).toList();
+    for (var i = 0; i < x.length; i++) {
+      if (x[i].cityId == cityId) {
+        Hive.box("favorites").deleteAt(i);
+        return;
+      }
+    }
+    logWarning("Attempting to unfavorite, non-favorited city");
   }
 
   Future<int> getCityKey(int geoID) async {
